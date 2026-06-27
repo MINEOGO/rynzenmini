@@ -29,10 +29,19 @@ if (Test-Path "$dir\.git") {
         Set-Location $dir
     }
 }
-if (-not (Test-Path $PROFILE)) {
+if (Test-Path $PROFILE) {
+    $content = Get-Content -Path $PROFILE
+    $newContent = @()
+    foreach ($line in $content) {
+        if ($line -notmatch 'function rynzen') {
+            $newContent += $line
+        }
+    }
+    $newContent += "function rynzen { node '$dir\rynzen-cli.js' }"
+    Set-Content -Path $PROFILE -Value $newContent
+} else {
     New-Item -Path $PROFILE -Type File -Force
+    Set-Content -Path $PROFILE -Value "function rynzen { node '$dir\rynzen-cli.js' }"
 }
-$fn = "function rynzen { node '$dir\rynzen-cli.js' }"
-Add-Content -Path $PROFILE -Value $fn
 Clear-Host
 node "$dir\rynzen-cli.js"
