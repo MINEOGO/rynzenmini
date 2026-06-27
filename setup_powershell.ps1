@@ -1,4 +1,7 @@
-Set-Location $PSScriptRoot
+if ($PSScriptRoot) {
+    Set-Location $PSScriptRoot
+}
+$dir = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
 $installed = $false
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     winget install --id Git.Git -e --source winget --accept-package-agreements --accept-source-agreements
@@ -15,7 +18,7 @@ git pull rynzemini main *>$null
 if (-not (Test-Path $PROFILE)) {
     New-Item -Path $PROFILE -Type File -Force
 }
-$fn = "function rynzen { node '$PSScriptRoot\rynzen-cli.js' }"
+$fn = "function rynzen { node '$dir\rynzen-cli.js' }"
 Add-Content -Path $PROFILE -Value $fn
 Clear-Host
-node "$PSScriptRoot\rynzen-cli.js"
+node "$dir\rynzen-cli.js"
