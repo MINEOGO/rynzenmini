@@ -1,0 +1,15 @@
+Set-Location $PSScriptRoot
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    winget install --id Git.Git -e --source winget --accept-package-agreements --accept-source-agreements
+}
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    winget install OpenJS.NodeJS --accept-package-agreements --accept-source-agreements
+}
+git pull rynzemini main *>$null
+if (-not (Test-Path $PROFILE)) {
+    New-Item -Path $PROFILE -Type File -Force
+}
+$fn = "function rynzen { node '$PSScriptRoot\rynzen-cli.js' }"
+Add-Content -Path $PROFILE -Value $fn
+Clear-Host
+node "$PSScriptRoot\rynzen-cli.js"
