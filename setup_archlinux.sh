@@ -7,7 +7,17 @@ fi
 if ! command -v node >/dev/null 2>&1; then
     sudo pacman -Sy nodejs npm --noconfirm
 fi
-git pull rynzemini main >/dev/null 2>&1 || git pull >/dev/null 2>&1
+if [ -d "$DIR/.git" ]; then
+    git pull rynzemini main >/dev/null 2>&1 || git pull >/dev/null 2>&1
+else
+    if [ ! -d "$DIR/rynzenmini" ]; then
+        git clone git@github.com:MINEOGO/rynzenmini.git >/dev/null 2>&1 || git clone https://github.com/MINEOGO/rynzenmini.git >/dev/null 2>&1
+    fi
+    if [ -d "$DIR/rynzenmini" ]; then
+        DIR="$DIR/rynzenmini"
+        cd "$DIR" || exit
+    fi
+fi
 sudo tee /usr/local/bin/rynzen >/dev/null << EOF
 #!/bin/sh
 node "$DIR/rynzen-cli.js"

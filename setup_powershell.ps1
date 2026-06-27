@@ -14,7 +14,21 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 if ($installed) {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
-git pull rynzemini main *>$null
+if (Test-Path "$dir\.git") {
+    Set-Location $dir
+    git pull rynzemini main *>$null
+} else {
+    if (-not (Test-Path "$dir\rynzenmini")) {
+        git clone git@github.com:MINEOGO/rynzenmini.git *>$null
+        if (-not $?) {
+            git clone https://github.com/MINEOGO/rynzenmini.git *>$null
+        }
+    }
+    if (Test-Path "$dir\rynzenmini") {
+        $dir = "$dir\rynzenmini"
+        Set-Location $dir
+    }
+}
 if (-not (Test-Path $PROFILE)) {
     New-Item -Path $PROFILE -Type File -Force
 }
